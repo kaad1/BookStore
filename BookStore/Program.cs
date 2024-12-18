@@ -39,6 +39,7 @@ namespace BookStore
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IBookPostRepository, BookPostRepository>();
             builder.Services.AddScoped<IImageRepository, ImageRepository>();
+            builder.Services.AddScoped<ICitatRepository, CitatRepository>();
 
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
             builder.Services.AddIdentityCore<IdentityUser>()
