@@ -1,8 +1,7 @@
-﻿using BookStore.Data;
+﻿
 using BookStore.Models.Domain;
 using BookStore.Models.DTO;
 using BookStore.Repositories.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
@@ -13,19 +12,16 @@ namespace BookStore.Controllers
     
     public class CitatsController : ControllerBase
     {
-        private readonly ICitatRepository citatRepository;
+        private readonly ICitatRepository _citatRepository;
 
         public CitatsController( ICitatRepository citatRepository)
         {
-            this.citatRepository = citatRepository;
+            _citatRepository = citatRepository;
         }
 
-  
+ 
 
-        [HttpPost]
-
-
-
+       [HttpPost]
        public async Task <IActionResult> CreateAsync(CreateCitatRequestDto request)
        {
             var citat = new Citats
@@ -33,10 +29,9 @@ namespace BookStore.Controllers
                 Citat = request.Citat,
                 Author = request.Author,
                 Book = request.Book,
-
             };
 
-           await citatRepository.CreateAsync(citat);
+           await _citatRepository.CreateAsync(citat);
 
             var response = new CitatsDto
             {
@@ -52,8 +47,7 @@ namespace BookStore.Controllers
         [HttpGet]
         public async Task <IActionResult> GetAllCitats()
         {
-           var citat= await citatRepository.GetAllAsync();
-
+            var citat= await _citatRepository.GetAllAsync();
 
             var response = new List<CitatPostDto>();
             foreach(var post in citat)
@@ -69,9 +63,5 @@ namespace BookStore.Controllers
             }
             return Ok(response);
         }
-    }
-    
-
-
-
+    }  
 }

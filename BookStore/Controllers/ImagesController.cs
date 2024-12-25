@@ -1,7 +1,6 @@
 ﻿using BookStore.Models.Domain;
 using BookStore.Models.DTO;
 using BookStore.Repositories.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.API.Controllers
@@ -17,7 +16,6 @@ namespace BookStore.API.Controllers
             this.imageRepository = imageRepository;
         }
 
-        // GET: {apibaseURL}/api/Images
         [HttpGet]
         public async Task<IActionResult> GetAllImages()
         {
@@ -42,8 +40,6 @@ namespace BookStore.API.Controllers
             return Ok(response);
         }
 
-
-        // POST: {apibaseurl}/api/images
         [HttpPost]
         public async Task<IActionResult> UploadImage([FromForm] IFormFile file,
             [FromForm] string fileName, [FromForm] string title)
@@ -94,6 +90,5 @@ namespace BookStore.API.Controllers
                 ModelState.AddModelError("file", "File size cannot be more than 10MB");
             }
         }
-
     }
 }

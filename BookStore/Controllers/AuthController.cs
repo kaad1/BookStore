@@ -1,9 +1,6 @@
 ﻿using BookStore.Models.DTO;
-using BookStore.Repositories.Implementation;
 using BookStore.Repositories.Interface;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
@@ -12,13 +9,13 @@ namespace BookStore.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly ITokenRepository tokenRepository;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly ITokenRepository _tokenRepository;
 
         public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
         {
-            this.userManager = userManager;
-            this.tokenRepository = tokenRepository;
+            _userManager = userManager;
+            _tokenRepository = tokenRepository;
         }
 
         // POST: {apibaseurl}/api/auth/login
@@ -27,19 +24,19 @@ namespace BookStore.Controllers
         public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
         {
             // Check Email
-            var identityUser = await userManager.FindByEmailAsync(request.Email);
+            var identityUser = await _userManager.FindByEmailAsync(request.Email);
 
             if (identityUser is not null)
             {
                 // Check Password
-                var checkPasswordResult = await userManager.CheckPasswordAsync(identityUser, request.Password);
+                var checkPasswordResult = await _userManager.CheckPasswordAsync(identityUser, request.Password);
 
                 if (checkPasswordResult)
                 {
-                    var roles = await userManager.GetRolesAsync(identityUser);
+                    var roles = await _userManager.GetRolesAsync(identityUser);
 
                     // Create a Token and Response
-                    var jwtToken = tokenRepository.CreateJwtToken(identityUser, roles.ToList());
+                    var jwtToken = _tokenRepository.CreateJwtToken(identityUser, roles.ToList());
 
                     var response = new LoginResponseDto()
                     {
@@ -57,12 +54,9 @@ namespace BookStore.Controllers
             return ValidationProblem(ModelState);
         }
 
-        // Post: {apibaseurl}/api/auth/register
-        // POST: {apibaseurl}/api/auth/register
-        [HttpPost]
+     
+            [HttpPost]
             [Route("register")]
-
-
 
             public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
             {
@@ -74,12 +68,12 @@ namespace BookStore.Controllers
                 };
 
                 // Create User
-                var identityResult = await userManager.CreateAsync(user, request.Password);
+                var identityResult = await _userManager.CreateAsync(user, request.Password);
 
                 if (identityResult.Succeeded)
                 {
                     // Add Role to user (Reader)
-                    identityResult = await userManager.AddToRoleAsync(user, "Reader");
+                    identityResult = await _userManager.AddToRoleAsync(user, "Reader");
 
                     if (identityResult.Succeeded)
                     {
@@ -109,7 +103,5 @@ namespace BookStore.Controllers
 
                 return ValidationProblem(ModelState);
             }
-
-        }
-      
+        }   
     }

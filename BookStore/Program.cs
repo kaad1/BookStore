@@ -75,7 +75,7 @@ namespace BookStore
                     };
 
                 });
-    
+
 
             var app = builder.Build();
 
@@ -87,11 +87,12 @@ namespace BookStore
             }
 
             app.UseHttpsRedirection();
+
             app.UseCors(options =>
             {
-            options.AllowAnyHeader();
-            options.AllowAnyOrigin();
-            options.AllowAnyMethod();
+                options.AllowAnyHeader();
+                options.AllowAnyOrigin();
+                options.AllowAnyMethod();
             });
 
             app.UseAuthentication();
@@ -99,9 +100,10 @@ namespace BookStore
 
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider=new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(),"Images")),
-                RequestPath="/Images"
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+                RequestPath = "/Images"
             });
+
             app.MapControllers();
 
             app.Run();

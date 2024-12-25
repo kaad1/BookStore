@@ -1,9 +1,6 @@
-﻿using BookStore.Data;
-using BookStore.Models.Domain;
+﻿using BookStore.Models.Domain;
 using BookStore.Models.DTO;
 using BookStore.Repositories.Interface;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
@@ -67,7 +64,6 @@ namespace BookStore.Controllers
        
         [HttpGet]
         [Route("{id:Guid}")]
-        //Get  http://localhost:5210/api/Categories/{id}
         public async Task <IActionResult> GetCategoryId([FromRoute]Guid id)
         {
           var existingCategory=  await categoryRepository.GetById(id);
@@ -83,10 +79,9 @@ namespace BookStore.Controllers
             };
             return Ok(response);
         }
-        // Put: http://localhost:5210/api/Categories/{id}
+
         [HttpPut]
-        [Route("{id:Guid}")]
-        
+        [Route("{id:Guid}")]       
         public async Task <IActionResult> EditCategory([FromRoute] Guid id, UpdateCategoryRequestDto request )
         {
             //Convert DTO to Domain model
@@ -113,15 +108,14 @@ namespace BookStore.Controllers
             return Ok(response);
         }
 
-        //Delete:http://localhost:5210/api/Categories/{id}
         [HttpDelete]
         [Route("{id:Guid}")]
-        public async Task <IActionResult> DeleteCategory([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
         {
-           var category=   await categoryRepository.DeleteAsync(id);
-            if(category is null)
+            var category = await categoryRepository.DeleteAsync(id);
+            if (category is null)
             {
-                return NotFound();  
+                return NotFound();
             }
 
             var response = new CategoryDto
@@ -132,6 +126,5 @@ namespace BookStore.Controllers
             };
             return Ok();
         }
-
     }
 }

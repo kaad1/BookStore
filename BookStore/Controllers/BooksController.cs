@@ -1,10 +1,9 @@
-﻿using Azure.Core;
+﻿
 using BookStore.Models.Domain;
 using BookStore.Models.DTO;
 using BookStore.Repositories.Implementation;
 using BookStore.Repositories.Interface;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Controllers
@@ -13,21 +12,17 @@ namespace BookStore.Controllers
     [ApiController]
     public class BooksController : ControllerBase
     {
-        private readonly IBookPostRepository bookPostRepository;
-        private readonly ICategoryRepository categoryRepository;
+        private readonly IBookPostRepository _bookPostRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
         public BooksController(IBookPostRepository bookPostRepository, ICategoryRepository categoryRepository  )
         {
-            this.bookPostRepository = bookPostRepository;
-            this.categoryRepository = categoryRepository;
+            _bookPostRepository = bookPostRepository;
+            _categoryRepository = categoryRepository;
         }
 
-        public CategoryRepository CategoryRepository { get; }
-        public ICategoryRepository CategoryRepository1 { get; }
-
-        //Post:{apibaseurl}/api/book
+      
         [HttpPost]
-
         public async Task <IActionResult> CreateBook([FromBody]CreateBookPostRequestDto request)
         {
             //Convert from dto to domain
@@ -47,13 +42,13 @@ namespace BookStore.Controllers
 
             foreach(var categoryGuid in request.Categories)
             {
-                var existingCategory= await categoryRepository.GetById(categoryGuid);
+                var existingCategory= await _categoryRepository.GetById(categoryGuid);
                 if(existingCategory is not null)
                 {
                     bookpost.Categories.Add(existingCategory);
                 }
             }
-           var bookPost= await bookPostRepository.CreateAsync(bookpost);
+           var bookPost= await _bookPostRepository.CreateAsync(bookpost);
 
             var response = new BookPostDto
             {
@@ -75,12 +70,12 @@ namespace BookStore.Controllers
             return Ok(response);
         }
 
-        //Get :/api/bookposts
+
 
         [HttpGet]
         public async Task <IActionResult> GetAllBookPosts()
         {
-          var bookPosts=  await bookPostRepository.GetAllAsync();
+          var bookPosts=  await _bookPostRepository.GetAllAsync();
 
             //Convert domain model on Dto
             var response= new List<BookPostDto>();
@@ -110,13 +105,13 @@ namespace BookStore.Controllers
                 return Ok(response);
         }
 
-        // GET: {apiBaseUrl}/api/blogposts/{id}
+
         [HttpGet]
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetBlogPostById([FromRoute] Guid id)
         {
             // Get the BlogPost from Repo
-            var bookPost = await bookPostRepository.GetByIdAsync(id);
+            var bookPost = await _bookPostRepository.GetByIdAsync(id);
 
             if (bookPost is null)
             {
@@ -145,15 +140,12 @@ namespace BookStore.Controllers
         }
 
         [HttpGet]
-        [Route("{urlHandle}")]
-      
-        
-        
+        [Route("{urlHandle}")]   
         public async Task <IActionResult> GetBookByUrlHandle([FromRoute] string urlHandle)
         {
             //Get bookpost details from repository
 
-           var bookpost= await bookPostRepository.GetByUrlHandleAsync(urlHandle);
+           var bookpost= await _bookPostRepository.GetByUrlHandleAsync(urlHandle);
              if(bookpost is null)
             {
                 return NotFound();
@@ -181,11 +173,8 @@ namespace BookStore.Controllers
             return Ok(response);
         }
 
-        // Httep Put :/api/bookposts/{id}
-
         [HttpPut]
         [Route("{id:Guid}")]
-   
         public async Task <IActionResult> UpdateBookPostById([FromRoute] Guid id, UpdateBookPostRequestDto request)
         {
             //Convert from Dto To Domain model
@@ -205,7 +194,7 @@ namespace BookStore.Controllers
 
             foreach (var categoryGuid in request.Categories) 
             {
-                var existingCategory = await categoryRepository.GetById(categoryGuid);
+                var existingCategory = await _categoryRepository.GetById(categoryGuid);
 
                 if (existingCategory != null)
                 {
@@ -213,7 +202,7 @@ namespace BookStore.Controllers
                 }
             }
 
-           var updatedBookPost= await bookPostRepository.UpdateAsync(bookpost);
+           var updatedBookPost= await _bookPostRepository.UpdateAsync(bookpost);
 
             if(updatedBookPost == null)
             {
@@ -242,12 +231,10 @@ namespace BookStore.Controllers
         }
 
         [HttpDelete]
-
-        [Route("{id:Guid}")]
-     
+        [Route("{id:Guid}")]     
         public async Task<IActionResult> DeleteBookPost([FromRoute] Guid id)
         {
-           var deletedBookPost= await bookPostRepository.DeleteAsync(id);
+           var deletedBookPost= await _bookPostRepository.DeleteAsync(id);
             if(deletedBookPost == null)
             {
                 return NotFound();  
